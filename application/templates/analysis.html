@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %} Analysis {% endblock %}
+
+{% block content %}
+<h1 class="text-center" style="margin: 3rem">Analysis</h1>
+<div>
+    <!-- Checkbox buttons -->
+    {% for attr in data %}
+        <input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" checked>
+        <label class="btn btn-secondary" for="option1">{{attr}}</label>
+    {% endfor %}
+    
+</div>
+<script>    
+    attrs_json = {{data|safe}};    
+    attributes = Object.keys(attrs_json);    
+    // selected attribute, collect the unique outputs and frequency.
+    // if more than 20 values for the attribute -> break;
+    output_map = {}
+    for (let i = 0; i < attributes.length; i++) {
+        output_map[attributes[i]] = {}
+                
+        values = Object.values(attrs_json)[i];
+        value_frequencies = {};
+        count = 0
+        values.forEach(function(val) {            
+            if (count > 20) {
+                break;
+            }
+            value_frequencies[val] = (value_frequencies[val] || 0) + 1;
+            count ++;
+        })
+        output_map[attributes[i]] = value_frequencies;
+        // for (let j = 0; j < values; j++) {
+        //     output_map[attributes[i]][values[j]] ++;
+        // }
+        // console.log(output_map[attributes[i]])
+    }
+</script>
+{% endblock %}
+<!-- 
+    <input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" checked>
+    <label class="btn btn-secondary" for="option1">Checked</label>
+
+    <input type="radio" class="btn-check" name="options" id="option2" autocomplete="off">
+    <label class="btn btn-secondary" for="option2">Radio</label>
+
+    <input type="radio" class="btn-check" name="options" id="option3" autocomplete="off" disabled>
+    <label class="btn btn-secondary" for="option3">Disabled</label>
+
+    <input type="radio" class="btn-check" name="options" id="option4" autocomplete="off">
+    <label class="btn btn-secondary" for="option4">Radio</label> -->

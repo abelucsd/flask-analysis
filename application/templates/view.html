@@ -6,7 +6,7 @@
 
 <h1 class="text-center" style="margin: 3rem">Table</h1>
 <div id="table-container">
-    <table id="table" class="table">
+    <table id="sample-table" class="table">
         <thead>
             <tr>
                 {% for column, value in table.items() %}
@@ -43,26 +43,38 @@
 </div>
 
 <script>
-    num_cols = document.getElementById('table').rows[0].cells.length
+    //num_cols = document.getElementById('table').rows[0].cells.length
+
     
     $(document).ready(function () {
-      $('#table').DataTable({
-        pageLength: 100,
-        "language": {
-            search: 'Filter:',
-        },
-        columns: [
-            {orderable: false, searchable: true},
-            {orderable: false, searchable: true},
-            {orderable: false, searchable: true},
-            {orderable: false, searchable: true},
-            {orderable: false, searchable: true},
-            {orderable: false, searchable: true}, 
-            {orderable: true, searchable: true}, 
-            {orderable: true, searchable: true},
-        ],
-        order: [[6, "asc"]]
-      });
+        // columnNames = document.getElementById('sample-table'); //JSON.parse('{{ table|safe }}')
+        // table_json = {{table|safe}};
+        // console.log(table_json);        
+        // console.log(Object.keys(table_json))
+        // for (let i = 0; i < table_json.length; i++) {
+        //     console.log(table_json[i])
+        // }
+
+        // if dynamic table -- then columns are all searchable and sortable.
+
+            
+        $('#sample-table').DataTable({
+            pageLength: 100,
+            "language": {
+                search: 'Filter:',
+            },
+            // columns: [
+            //     {orderable: false, searchable: true},
+            //     {orderable: false, searchable: true},
+            //     {orderable: false, searchable: true},
+            //     {orderable: false, searchable: true},
+            //     {orderable: false, searchable: true},
+            //     {orderable: false, searchable: true}, 
+            //     {orderable: true, searchable: true}, 
+            //     {orderable: true, searchable: true},
+            // ],
+            order: [[0, "asc"]]
+        });
     });
 </script>
 
