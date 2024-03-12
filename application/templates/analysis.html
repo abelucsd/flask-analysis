@@ -6,36 +6,60 @@
 <div>
     <!-- Checkbox buttons -->
     {% for attr in data %}
-        <input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" checked>
-        <label class="btn btn-secondary" for="option1">{{attr}}</label>
+        <input type="radio" class="btn-check" name="options" id="radio-{{attr}}" autocomplete="off" value="{{attr}}" checked onchange="dataDistribution(value)">
+        <label class="btn btn-secondary" for="radio-{{attr}}">{{attr}}</label>
     {% endfor %}
     
 </div>
+
+<!-- integrate Chart.js -->
+<script src="path/to/chartjs/dist/chart.umd.js"></script>
+
 <script>    
     attrs_json = {{data|safe}};    
     attributes = Object.keys(attrs_json);    
     // selected attribute, collect the unique outputs and frequency.
     // if more than 20 values for the attribute -> break;
-    output_map = {}
-    for (let i = 0; i < attributes.length; i++) {
-        output_map[attributes[i]] = {}
+    // output_map = {}
+    // for (let i = 0; i < attributes.length; i++) {
+    //     output_map[attributes[i]] = {}
                 
-        values = Object.values(attrs_json)[i];
-        value_frequencies = {};
-        count = 0
-        values.forEach(function(val) {            
-            if (count > 20) {
+    //     values = Object.values(attrs_json)[i];
+    //     value_frequencies = {};        
+
+    //     for (let j = 0; j < values.length; j++) {
+    //         if (Object.keys(value_frequencies).length > 20) {
+    //             // do not use this key entry.
+    //             break;
+    //         }
+    //         value_frequencies[values[j]] = (value_frequencies[values[j]] || 0) + 1;        
+    //     }
+    //     output_map[attributes[i]] = value_frequencies;
+     
+    //     console.log(output_map[attributes[i]])
+    // }
+    
+    function dataDistribution(attr) {        
+        // Creates a graph based on the attribute
+        // params:
+        //     attr - data attribute 
+
+        // value frequency map of unique outputs
+        output_map = {}
+        outputs = attrs_json[attr]
+
+        for (let i = 0; i < outputs.length; i++) {
+            if (Object.keys(output_map).length > 20) {
                 break;
             }
-            value_frequencies[val] = (value_frequencies[val] || 0) + 1;
-            count ++;
-        })
-        output_map[attributes[i]] = value_frequencies;
-        // for (let j = 0; j < values; j++) {
-        //     output_map[attributes[i]][values[j]] ++;
-        // }
-        // console.log(output_map[attributes[i]])
+            output_map[outputs[i]] = (output_map[outputs[i]] || 0) + 1
+        }
+        
+        // Create the graph -- Chart.js due to high level graphs (large datasets)
+        const myChart = new Chart(ctx, {...});
     }
+
+
 </script>
 {% endblock %}
 <!-- 
