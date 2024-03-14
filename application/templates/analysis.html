@@ -8,16 +8,22 @@
     {% for attr in data %}
         <input type="radio" class="btn-check" name="options" id="radio-{{attr}}" autocomplete="off" value="{{attr}}" checked onchange="dataDistribution(value)">
         <label class="btn btn-secondary" for="radio-{{attr}}">{{attr}}</label>
+
+        
     {% endfor %}
+    <div>
+        <canvas id="chart" hidden="true"></canvas>
+    </div>
     
 </div>
 
 <!-- integrate Chart.js -->
-<script src="path/to/chartjs/dist/chart.umd.js"></script>
-
-<script>    
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    
     attrs_json = {{data|safe}};    
-    attributes = Object.keys(attrs_json);    
+    attributes = Object.keys(attrs_json);
+
     // selected attribute, collect the unique outputs and frequency.
     // if more than 20 values for the attribute -> break;
     // output_map = {}
@@ -38,6 +44,47 @@
      
     //     console.log(output_map[attributes[i]])
     // }
+
+    // default chart
+    const data = [
+        { year: 2010, count: 10 },
+        { year: 2011, count: 20 },
+        { year: 2012, count: 15 },
+        { year: 2013, count: 25 },
+        { year: 2014, count: 22 },
+        { year: 2015, count: 30 },
+        { year: 2016, count: 28 },
+    ];
+    let chart =   new Chart(
+    document.getElementById('chart'),
+    {
+        type: 'bar',
+        options: {
+            animation: false,
+            plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                enabled: false
+            }
+            }
+        },
+        data: {
+            labels: data.map(row => row.year),
+            datasets: [
+            {
+                label: 'Acquisitions by year',
+                data: data.map(row => row.count)
+            }
+            ]
+        }
+        }
+    );;
+
+    
+    
+    
     
     function dataDistribution(attr) {        
         // Creates a graph based on the attribute
@@ -54,10 +101,45 @@
             }
             output_map[outputs[i]] = (output_map[outputs[i]] || 0) + 1
         }
+    
         
-        // Create the graph -- Chart.js due to high level graphs (large datasets)
-        const myChart = new Chart(ctx, {...});
+        // Create the graph -- Chart.js due to high level graphs (large datasets)        
+
+        // reset -- canvas
+        // document.getElementById('chart').innerHTML = '';
+        document.getElementById('chart').hidden=false;
+        
+        chart.destroy()
+
+        const labels = Object.keys(output_map);
+        const data = {
+            labels : labels,
+            datasets: [{
+                label: attr,
+                data: Object.values(output_map),
+                backgroundColor: Array(Object.keys(output_map).length).fill('rgba(255, 99, 132, 0.2)'),
+                borderColor: Array(Object.keys(output_map).length).fill('rgb(255, 99, 132)'),
+                borderWidth: 1
+            }],            
+        };
+
+        chart = new(Chart)(
+            document.getElementById('chart'),
+            {
+                type: 'bar',
+                data: data,
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                },
+            }
+        );        
+        
     }
+    
 
 
 </script>
