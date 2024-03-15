@@ -80,11 +80,7 @@
             ]
         }
         }
-    );;
-
-    
-    
-    
+    );
     
     function dataDistribution(attr) {        
         // Creates a graph based on the attribute
@@ -93,15 +89,14 @@
 
         // value frequency map of unique outputs
         output_map = {}
-        outputs = attrs_json[attr]
+        outputs = attrs_json[attr].sort()
 
         for (let i = 0; i < outputs.length; i++) {
             if (Object.keys(output_map).length > 20) {
                 break;
             }
             output_map[outputs[i]] = (output_map[outputs[i]] || 0) + 1
-        }
-    
+        }        
         
         // Create the graph -- Chart.js due to high level graphs (large datasets)        
 

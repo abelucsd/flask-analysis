@@ -20,10 +20,12 @@ def create_app(test_config=None):
     from .views import views
     from .api import api    
     from .analysis import analysis
+    from .learning import learning
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(api, url_prefix='/')    
     app.register_blueprint(analysis, url_prefix='/')
+    app.register_blueprint(learning, url_prefix='/')
 
     with app.app_context():
         db.create_all()    

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %} Analysis {% endblock %}
+
+{% block content %}
+    <div>
+        Select a Learning Algorithm:
+    </div>
+    <br>
+    <form action="{{url_for('learning.learning_api')}}" method="POST">
+        <div>
+            <input type="radio" class="btn-check" name="learning_algo" id="option1" autocomplete="off" value="Linear Regression">
+            <label class="btn btn-secondary" for="option1">Linear Regression</label>
+            <input type="radio" class="btn-check" name="learning_algo" id="option2" autocomplete="off" value="Ensembles">
+            <label class="btn btn-secondary" for="option2">Ensembles</label>
+            <input type="radio" class="btn-check" name="learning_algo" id="option3" autocomplete="off" value="Neural Network">
+            <label class="btn btn-secondary" for="option3">Neural Network</label>
+        </div>
+        <div>
+            Independent Variables X
+            {% for attr in data %}
+                <input type="checkbox" class="btn-check" name="indep-{{attr}}" id="indep-{{attr}}" autocomplete="off" value="{{attr}}">
+                <label class="btn btn-secondary" for="indep-{{attr}}">{{attr}}</label>        
+            {% endfor %}
+        </div>
+        <div>
+            Dependent Variable Y
+            {% for attr in data %}
+                <input type="radio" class="btn-check dep-radio" name="dep-{{attr}}" id="dep-{{attr}}" autocomplete="off" value="{{attr}}" onchange="selectedY(value)">
+                <label class="btn btn-secondary" for="dep-{{attr}}">{{attr}}</label>        
+            {% endfor %}
+        </div>
+        <br>
+        <input class="btn btn-primary" type="submit" value="Submit">
+    </form>
+
+    <div>
+
+    </div>
+
+<script>
+    attrs_json = {{data|safe}};
+    attributes = Object.keys(attrs_json);
+
+    function selectedY(attr) {
+        
+        for(let i = 0; i < attributes.length; i++) {
+            if (attributes[i] != attr) {
+                console.log("hi");
+                console.log(`dep-${attributes[i]}`)
+                document.getElementById(`dep-${attributes[i]}`).checked = false;
+            }
+        }
+    }
+    
+</script>
+
+{% endblock %}
