@@ -7,9 +7,7 @@
     <!-- Checkbox buttons -->
     {% for attr in data %}
         <input type="radio" class="btn-check" name="options" id="radio-{{attr}}" autocomplete="off" value="{{attr}}" checked onchange="dataDistribution(value)">
-        <label class="btn btn-secondary" for="radio-{{attr}}">{{attr}}</label>
-
-        
+        <label class="btn btn-secondary" for="radio-{{attr}}">{{attr}}</label>        
     {% endfor %}
     <div>
         <canvas id="chart" hidden="true"></canvas>

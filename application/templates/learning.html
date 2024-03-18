@@ -17,29 +17,50 @@
         </div>
         <div>
             Independent Variables X
-            {% for attr in data %}
+            {% for attr in data.sample_map %}
                 <input type="checkbox" class="btn-check" name="indep-{{attr}}" id="indep-{{attr}}" autocomplete="off" value="{{attr}}">
                 <label class="btn btn-secondary" for="indep-{{attr}}">{{attr}}</label>        
             {% endfor %}
         </div>
         <div>
             Dependent Variable Y
-            {% for attr in data %}
+            {% for attr in data.sample_map %}
                 <input type="radio" class="btn-check dep-radio" name="dep-{{attr}}" id="dep-{{attr}}" autocomplete="off" value="{{attr}}" onchange="selectedY(value)">
-                <label class="btn btn-secondary" for="dep-{{attr}}">{{attr}}</label>        
+                <label class="btn btn-secondary" for="dep-{{attr}}">{{attr}}</label>
             {% endfor %}
         </div>
         <br>
         <input class="btn btn-primary" type="submit" value="Submit">
     </form>
 
-    <div>
+    <div>        
+        <canvas id="learning-chart" hidden="true"></canvas>
 
     </div>
 
 <script>
-    attrs_json = {{data|safe}};
+    attrs_json = {{data.sample_map|safe}};
     attributes = Object.keys(attrs_json);
+
+    // Default learning-chart
+    let labels = Utils.months({count: 7});
+    let data = {
+        labels: labels,
+        datasets: [{
+            label: 'My First Dataset',
+            data: [65, 59, 80, 81, 56, 55, 40],
+            fill: false,
+            borderColor: 'rgb(75, 192, 192)',
+            tension: 0.1
+        }]
+    };
+    let chart = new Chart(
+        document.getElementById('learning-chart'),
+        {
+            type: 'line',
+            data: data,
+        }
+    );
 
     function selectedY(attr) {
         
@@ -50,6 +71,37 @@
                 document.getElementById(`dep-${attributes[i]}`).checked = false;
             }
         }
+    }
+
+    function model_data() {
+        document.getElementById('learning-chart').hidden=false;        
+        chart.destroy()
+        // Data accuracy
+        // ctx = {'y_test': Y_test, 'y_pred': test_data_pred, 'sample_map': sample_map}
+        graphLabel = {{data.learning_algo|safe}}
+        yTest = {{data.y_test|safe}}
+        predictedPrice = {{data.y_pred|safe}}
+
+
+        labels = yTest;
+        data = {
+            labels: labels,
+            datasets: [{
+                label: graphLabel,
+                data: predictedPrice,
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        };
+
+        chart = new(Chart)(
+            document.getElementById('chart'),
+            {
+                type: 'line',
+                data: data,                
+            }
+        );   
     }
     
 </script>

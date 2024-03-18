@@ -9,6 +9,7 @@ import json
 
 import pandas as pd
 import numpy as np
+import re
 
 import collections
 
@@ -47,6 +48,7 @@ def sample_api():
     elif request.method == 'POST':
         """
             Receives data file and insert the data into the database.
+            TODO: Feature to add train and test data.
         """
         # TODO: Make sure to only accept XML or txt files.
         print("Submitted a File.")      
@@ -70,6 +72,18 @@ def sample_api():
             
         if sample_file_data:
             df = pd.read_csv(sample_file_data, sep='\t')
+
+            # TODO
+            # Cleaning
+            # replace column commas with white space
+
+
+            # replace all commas with white space        
+            # re.sub(',', ' ', df)
+            df = df.apply(lambda x: x.str.replace(',', ' '))
+            print(len(df.iloc[2]))
+            
+
 
             # check non delimited tab
             # if we get NaN values, then we have a non tab delimited cell
