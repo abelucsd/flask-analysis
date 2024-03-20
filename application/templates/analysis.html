@@ -19,7 +19,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     
-    attrs_json = {{data|safe}};    
+    attrs_json = {{data|safe}};
     attributes = Object.keys(attrs_json);
 
     // selected attribute, collect the unique outputs and frequency.
@@ -86,6 +86,7 @@
         //     attr - data attribute 
 
         // value frequency map of unique outputs
+        console.log("dataDistribution -- ")
         output_map = {}
         outputs = attrs_json[attr].sort()
 

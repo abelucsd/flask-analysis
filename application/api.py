@@ -71,31 +71,22 @@ def sample_api():
             return jsonify(msg='Error: {}. '.format(error)), 400
             
         if sample_file_data:
-            df = pd.read_csv(sample_file_data, sep='\t')
-
-            # TODO
-            # Cleaning
-            # replace column commas with white space
-
-
-            # replace all commas with white space        
-            # re.sub(',', ' ', df)
-            df = df.apply(lambda x: x.str.replace(',', ' '))
-            print(len(df.iloc[2]))
-            
-
+            df = pd.read_csv(sample_file_data, sep=r"\t|,")
+                
 
             # check non delimited tab
             # if we get NaN values, then we have a non tab delimited cell
-            if df.isnull().values.any():
-                error = "Non delimited tabs exist."
-                return jsonify(msg='Error: {}. '.format(error)), 400
+            # if df.isnull().values.any():
+            #     error = "Non delimited tabs exist."
+            #     return jsonify(msg='Error: {}. '.format(error)), 400
             
             # replace all white space with NaN
             df.replace(r'^\s*$', np.nan, regex = True, inplace=True)
 
             # drop rows with NULL values
-            df.dropna(inplace = True)
+            # df.dropna(inplace = True) TODO: Make this an option.
+            # replace nan values to ""
+            df.replace(np.nan, "", regex=True, inplace=True)
             
             # data cleaning - remove column leading and trailing whitespace
             df.rename(columns=lambda x: x.strip(), inplace=True)
@@ -107,14 +98,15 @@ def sample_api():
             # TODO: Create hashmap, then convert it to json                        
             sample_map = collections.defaultdict(list)
             
-            for index, row in df.iterrows():            
+            for index, row in df.iterrows():                              
                 
-                for col_name in df.columns:                    
+                for col_name in df.columns:     
                     if str(row[col_name]).isspace():
                         print("hi there")
                     sample_map[col_name].append(row[col_name])
                     # sample_map[col_name] += ", " + str(row[col_name])
             print("num rows: {}".format(len(df)))
+            print(sample_map)
             
             # done - with hashmap data
             # convert to json
