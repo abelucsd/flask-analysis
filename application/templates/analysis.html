@@ -2,13 +2,27 @@
 {% block title %} Analysis {% endblock %}
 
 {% block content %}
+
+
+
 <h1 class="text-center" style="margin: 3rem">Analysis</h1>
-<div>
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+        Dropdown
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+            {% for attr in data %}
+                <li><button class="dropdown-item" type="button" name="options" id="button-{{attr}}" value="{{attr}}" onclick="dataDistribution(value)">{{attr}}</button></li>
+            {% endfor %}
+        </ul>
+    </div>
+
     <!-- Checkbox buttons -->
-    {% for attr in data %}
+    <!-- {% for attr in data %}
         <input type="radio" class="btn-check" name="options" id="radio-{{attr}}" autocomplete="off" value="{{attr}}" checked onchange="dataDistribution(value)">
         <label class="btn btn-secondary" for="radio-{{attr}}">{{attr}}</label>        
-    {% endfor %}
+    {% endfor %} -->
+
     <div>
         <canvas id="chart" hidden="true"></canvas>
     </div>

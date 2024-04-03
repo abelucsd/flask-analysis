@@ -55,11 +55,9 @@ def sample_api():
                         
         print(request.stream)
         if 'file' not in request.files:
-            print("not in request files")
-            
+            print("not in request files")       
         
-        sample_file_data = request.files['file']
-        
+        sample_file_data = request.files['file']        
 
         # check format
         # if request.content_type != 'text/xml':
@@ -72,7 +70,6 @@ def sample_api():
             
         if sample_file_data:
             df = pd.read_csv(sample_file_data, sep=r"\t|,")
-                
 
             # check non delimited tab
             # if we get NaN values, then we have a non tab delimited cell

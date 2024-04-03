@@ -59,7 +59,7 @@
 
             
         $('#sample-table').DataTable({
-            pageLength: 100,
+            pageLength: 50,
             "language": {
                 search: 'Filter:',
             },
@@ -73,7 +73,9 @@
             //     {orderable: true, searchable: true}, 
             //     {orderable: true, searchable: true},
             // ],
-            order: [[0, "asc"]]
+            order: [[0, "asc"]],
+            scrollX: true
+
         });
     });
 </script>

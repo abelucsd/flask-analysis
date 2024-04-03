@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 {% block title %} Analysis {% endblock %}
+<!--
+    Dropdown list for variables 
+    Click to add more variables
+    + button add more
 
+ -->
 {% block content %}
     <div>
         Select a Learning Algorithm:
@@ -21,6 +26,18 @@
                 <input type="checkbox" class="btn-check" name="indep-{{attr}}" id="indep-{{attr}}" autocomplete="off" value="{{attr}}">
                 <label class="btn btn-secondary" for="indep-{{attr}}">{{attr}}</label>        
             {% endfor %}
+
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                Dropdown
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                    {% for attr in data.sample_map %}
+                        <li><button class="dropdown-item" type="button" name="indep-{{attr}}" id="indep-{{attr}}" value="{{attr}}" onclick="dataDistribution(value)">{{attr}}</button></li>
+                    {% endfor %}
+                </ul>
+            </div>
+
         </div>
         <div>
             Dependent Variable Y
