@@ -30,12 +30,25 @@ def learning_api():
     # convert json into table
     sample_json = sample.json_data
     sample_map = json.loads(sample_json)
-    print(type(sample))
+    # print(type(sample))
 
     if request.method == 'POST':
-        for item in request.form:
-            print(item)
-        print(request.form['learning_algo'])
+        print(request.form)
+        # for item in request.form:
+        #     print(item)
+        # print(request.form['dep-1'])
+        # print(request.form['learning_algo'])
+        
+        # for item in request.data:
+        #     print(item)
+
+        # print(request.form)
+
+        import time
+        time.sleep(20)
+
+        return render_template('learning.html', data = {'sample_map': sample_map}), 200
+        
 
         # Y value is last
         import re

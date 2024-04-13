@@ -11,7 +11,7 @@
         Select a Learning Algorithm:
     </div>
     <br>
-    <form action="{{url_for('learning.learning_api')}}" method="POST">
+    <form id="learningForm"  onsubmit="onSubmit()">
         <div>
             <input type="radio" class="btn-check" name="learning_algo" id="option1" autocomplete="off" value="Linear Regression">
             <label class="btn btn-secondary" for="option1">Linear Regression</label>
@@ -20,31 +20,29 @@
             <input type="radio" class="btn-check" name="learning_algo" id="option3" autocomplete="off" value="Neural Network">
             <label class="btn btn-secondary" for="option3">Neural Network</label>
         </div>
-        <div>
+
+        <div id="indep-variables">
             Independent Variables X
-            {% for attr in data.sample_map %}
-                <input type="checkbox" class="btn-check" name="indep-{{attr}}" id="indep-{{attr}}" autocomplete="off" value="{{attr}}">
-                <label class="btn btn-secondary" for="indep-{{attr}}">{{attr}}</label>        
-            {% endfor %}
+            <div class="d-grid gap-2 d-md-block">
+                <button class="btn btn-primary addBtn" type="button" id="addBtn-indep">+</button>                
+            </div>
 
             <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
-                Dropdown
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                
+                <select class="dropdown-menu" aria-labelledby="dropdownMenu2">
                     {% for attr in data.sample_map %}
-                        <li><button class="dropdown-item" type="button" name="indep-{{attr}}" id="indep-{{attr}}" value="{{attr}}" onclick="dataDistribution(value)">{{attr}}</button></li>
+                        <option class="dropdown-item"  name="indep-{{attr}}" id="indep-{{attr}}" value="{{attr}}" onclick="dataDistribution(value)">{{attr}}</option>
                     {% endfor %}
-                </ul>
+                </select>
             </div>
 
         </div>
-        <div>
-            Dependent Variable Y
-            {% for attr in data.sample_map %}
-                <input type="radio" class="btn-check dep-radio" name="dep-{{attr}}" id="dep-{{attr}}" autocomplete="off" value="{{attr}}" onchange="selectedY(value)">
-                <label class="btn btn-secondary" for="dep-{{attr}}">{{attr}}</label>
-            {% endfor %}
+        <div id="dep-variables">
+            Dependent Variables Y
+            <div class="d-grid gap-2 d-md-block">
+                <button class="btn btn-primary addBtn" type="button" id="addBtn-dep">+</button>                
+            </div>
+                    
         </div>
         <br>
         <input class="btn btn-primary" type="submit" value="Submit">
@@ -59,8 +57,10 @@
     attrs_json = {{data.sample_map|safe}};
     attributes = Object.keys(attrs_json);
 
+    
     // Default learning-chart
-    let labels = Utils.months({count: 7});
+    // let labels = Utils.months({count: 7});
+    let labels = [1, 2, 3, 4, 5, 6, 7]
     let data = {
         labels: labels,
         datasets: [{
@@ -79,17 +79,24 @@
         }
     );
 
+    // -----    
+
+    // TODO: to delete
     function selectedY(attr) {
         
         for(let i = 0; i < attributes.length; i++) {
             if (attributes[i] != attr) {
-                console.log("hi");
-                console.log(`dep-${attributes[i]}`)
+                // console.log("hi");
+                // console.log(`dep-${attributes[i]}`)
                 document.getElementById(`dep-${attributes[i]}`).checked = false;
             }
         }
     }
 
+    /**
+     * Create a graph out of machine learning algorithms during a get request.
+     * 
+    */
     function model_data() {
         document.getElementById('learning-chart').hidden=false;        
         chart.destroy()
@@ -98,7 +105,6 @@
         graphLabel = {{data.learning_algo|safe}}
         yTest = {{data.y_test|safe}}
         predictedPrice = {{data.y_pred|safe}}
-
 
         labels = yTest;
         data = {
@@ -119,6 +125,126 @@
                 data: data,                
             }
         );   
+    }
+
+
+
+    // --- X and Y variables form logic
+
+    // x should have a map, while y should have one value.
+    var indepVariables = {}
+    var countIndepVars = 0
+    var depVariable = ''
+
+    /**
+     * Creates html dropdown button and functionality
+    */ 
+    $(".addBtn").on("click", function() {        
+
+        // x or y feature (variable)
+        const feature = this.id
+
+        let container = ''
+        if (this.id == "addBtn-indep") {
+            container = document.getElementById("indep-variables")
+            countIndepVars++;
+        }
+        else {
+            container = document.getElementById("dep-variables")
+        }
+                
+        const newDiv = document.createElement("div")
+        newDiv.className = "dropdown"
+
+        container.appendChild(newDiv)
+
+        var menuBtn = document.createElement("button")                
+        menuBtn.className="btn btn-secondary dropdown-toggle"
+        menuBtn.setAttribute('type', 'button')
+        menuBtn.setAttribute('id', "dropdownMenu")
+        menuBtn.setAttribute('data-bs-toggle', 'dropdown')
+        menuBtn.setAttribute('aria-expanded', 'false')
+        menuBtn.innerHTML = 'Dropdown'
+
+        var ulMenu = document.createElement("ul")
+        ulMenu.className = "dropdown-menu"
+        ulMenu.setAttribute('aria-labelledby', 'dropdownMenu')
+        
+        newDiv.appendChild(menuBtn)
+        newDiv.appendChild(ulMenu)
+
+        for (var i = 0; i < attributes.length; i++) {
+            var li = document.createElement("li")
+
+            var btnItem = document.createElement("button")
+            btnItem.setAttribute('type', 'button')
+            btnItem.className="dropdown-item"
+            btnItem.value = attributes[i];
+            btnItem.text = attributes[i];
+            btnItem.name = attributes[i];   
+            btnItem.innerHTML = attributes[i];
+            
+            // TODO: create own function for assigning button functionality.
+            if (this.id == "addBtn-dep") {
+                // y variable
+                btnItem.id = attributes[i];
+                btnItem.onclick = function() {
+                    depVariable = {name: 'dep-1', value: this.value}
+                }
+
+                // disable addBtn dependent variable (y) -- only 1 variable is allowed.
+                addBtnDep = document.getElementById("addBtn-dep")                
+                addBtnDep.disabled = true
+                addBtnDep.hidden = true
+            }
+            else {
+                btnItem.id = attributes[i].concat(countIndepVars);
+                
+                btnItem.onclick = function () {                
+                    let btnId = this.id
+                    var btnVal = 'indep-'
+                    for (let i = btnId.length - 1; i >= 0; i--) {
+                        let c = btnId[i]
+                        if (c < '0' || c > '9') {
+                            break
+                        }
+                        btnVal += btnId[i]                        
+                    }
+                    indepVariables[btnVal] = {name: btnVal, value: this.value}                                   
+                }
+            }
+            li.appendChild(btnItem)            
+            ulMenu.appendChild(li)
+        }
+    })
+
+    /**
+     * Form submit -- add values from variables hashmap to the form to submit via ajax.
+     * 
+     */
+    function onSubmit() {
+        // do AJAX -- Asynchronous Javascript And XML
+        
+        var data = $('#learningForm').serializeArray()
+        
+        // add indepvariables to formData
+        Object.keys(indepVariables).forEach( key => {            
+            data.push(indepVariables[`${key}`])
+        })
+
+        data.push(depVariable)
+        
+        $.ajax({
+            type: 'POST',
+            url: $(this).data('url'),
+            data: data
+            ,
+            success: function (json_response) {
+                // Successful AJAX response handling routine                
+            },
+            error: function(xhr, errmsg, err) {}
+
+        })
     }
     
 </script>
