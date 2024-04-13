@@ -33,21 +33,14 @@ def learning_api():
     # print(type(sample))
 
     if request.method == 'POST':
-        print(request.form)
-        # for item in request.form:
-        #     print(item)
-        # print(request.form['dep-1'])
-        # print(request.form['learning_algo'])
-        
-        # for item in request.data:
-        #     print(item)
+        print("posting")
 
-        # print(request.form)
 
-        import time
-        time.sleep(20)
+        # Uncomment to test form post submission
+        # import time
+        # time.sleep(20)
 
-        return render_template('learning.html', data = {'sample_map': sample_map}), 200
+        # return render_template('learning.html', data = {'sample_map': sample_map}), 200
         
 
         # Y value is last
@@ -57,36 +50,55 @@ def learning_api():
         x_attrs, y_attr = [], ''
         for key in request.form:
             if key.startswith('indep-'):
-                x_attrs.append(key)
+                x_attrs.append(request.form[key])
             elif key.startswith('dep-'):
                 # only 1 occurence of y output
-                y_attr = key
-
+                y_attr = request.form[key]
+        
         # TODO:
         # - X and Y into dataframes.
         # - Train Test Split
 
         # Train and Test Data
         # Use random_state: 42
-        X = sample_map.drop([y_attr])
-        Y = sample_map[y_attr]
+
+        sample_df = pd.DataFrame.from_dict(sample_map)        
                 
+        X = sample_df[[col for col in x_attrs]]
+        Y = sample_map[y_attr]
+
+        # might need some requirements for test_train_split()
+        X = X.iloc[:]
+        Y = Y.iloc[:]
+                        
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.3, random_state=42)
+
+        # return render_template('learning.html', data = {'sample_map': sample_map}), 200
+        print(X_train)
+        print(Y_train)
+
+        print("hi")
 
         ml_model = None
         train_data_pred, test_data_pred = [], []
         error_score, error_score_test = 0, 0
-        if learning_algo.lower() == 'linear regression':
+        
+        if learning_algo.lower().strip() == 'linear regression':
+            print('Linear Regression Model')
             ml_model = LinearRegression()
 
             # Fit the model
             ml_model.fit(X_train, Y_train)
+            print('after fit')
             train_data_pred = ml_model.predict(X_train)
+            print('after pred')
             error_score = metrics.r2_score(Y_train, train_data_pred) # r squared error
-            ml_model.score(X_test, Y_test)
+            ml_model.score(X_test, Y_test)            
             mean_squared_error(ml_model(X_train), Y_train, squared=False)
 
-            # Test Data            
+            print("After fitting the model.")
+
+            # Test Data
             
             test_data_pred = ml_model.predict(X_test)
             error_score_test = metrics.r2_score(Y_test, test_data_pred)
@@ -96,6 +108,8 @@ def learning_api():
 
             # reformat learning.html for data -> data.sample_map jinja code.
             ctx = {'y_test': Y_test, 'y_pred': test_data_pred, 'model_type': learning_algo, 'sample_map': sample_map}
+
+            print("Done: Linear Regression")
             return render_template('learning.html', data = ctx), 200
 
             pass
